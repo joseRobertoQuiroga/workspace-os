@@ -494,6 +494,33 @@ body {
   max-height: 31rem;
 }
 
+/* ============ Columnas Kanban ============ */
+/* Altura fija (≈4 tarjetas visibles) + scroll interno infinito: las columnas
+   nunca expanden la pantalla, el resto de elementos se recorre con scroll. */
+.kanban-col {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.kanban-col-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--line-strong)) transparent;
+}
+.kanban-col-body::-webkit-scrollbar {
+  width: 6px;
+}
+.kanban-col-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-col-body::-webkit-scrollbar-thumb {
+  background: rgb(var(--line-strong));
+  border-radius: 3px;
+}
+
 /* Enlaces de referencia resaltados (azul eléctrico) */
 .link-ref {
   color: rgb(var(--link));

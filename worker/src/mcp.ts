@@ -134,7 +134,71 @@ export function crearMcpServer(env: Env): McpServer {
       let p = snap.proyectos as unknown as Record<string, any>[]
       if (area) p = p.filter((x) => x.area_id === area)
       if (estado) p = p.filter((x) => x.estado === estado)
-      return ok(`Proyectos: ${p.length}\n` + p.map((x) => `${x.nombre} [${x.estado}] (${x.area_id})`).join('\n') || '—')
+      return ok(`Proyectos: ${p.length}\n` + p.map((x) => `${x.nombre} [${x.estado}] (${x.area_id})${x.presupuesto ? ' · $' + x.presupuesto : ''}`).join('\n') || '—')
+    }
+  )
+
+  server.registerTool(
+    'crear_proyecto',
+    {
+      description: 'Crea un proyecto (incluye campos económicos para freelance: presupuesto, tarifa y facturado).',
+      inputSchema: {
+        nombre: z.string(),
+        area_id: z.string().describe('universidad | freelance | emprendimiento | personal'),
+        tipo: z.string().optional().describe('Producto propio | Cliente freelance | Universidad | Investigación R&D'),
+        estado: z.string().optional().describe('idea | activo | pausado | completado | archivado'),
+        prioridad: z.enum(['alta', 'media', 'baja']).optional(),
+        fecha_limite: z.string().optional().describe('YYYY-MM-DD'),
+        stack: z.array(z.string()).optional(),
+        descripcion: z.string().optional(),
+        cliente_id: z.string().nullable().optional(),
+        presupuesto: z.number().nullable().optional().describe('Monto del proyecto (USD)'),
+        tarifa_hora: z.number().nullable().optional().describe('Tarifa en USD/hora'),
+        facturado: z.number().nullable().optional().describe('Monto ya facturado/cobrado'),
+      },
+    },
+    async (args) => {
+      const snap = await leerSnapshot(env)
+      const proy = {
+        id: `proy-${uid()}`,
+        nombre: args.nombre,
+        area_id: args.area_id,
+        tipo: args.tipo ?? 'Producto propio',
+        estado: args.estado ?? 'idea',
+        prioridad: args.prioridad ?? 'media',
+        destacado: false,
+        fecha_inicio: null,
+        fecha_limite: args.fecha_limite ?? null,
+        stack: args.stack ?? [],
+        descripcion: args.descripcion ?? '',
+        cliente_id: args.cliente_id ?? null,
+        presupuesto: args.presupuesto ?? null,
+        tarifa_hora: args.tarifa_hora ?? null,
+        facturado: args.facturado ?? null,
+        creado_en: new Date().toISOString(),
+      }
+      snap.proyectos = [proy as unknown as Record<string, unknown>, ...snap.proyectos]
+      await escribirSnapshot(env, snap)
+      return ok(`Proyecto creado: "${args.nombre}" (${proy.id})`)
+    }
+  )
+
+  server.registerTool(
+    'actualizar_proyecto',
+    {
+      description: 'Actualiza un proyecto (campos parciales, incluidos los económicos).',
+      inputSchema: {
+        id: z.string(),
+        cambios: z.record(z.string(), z.unknown()).describe('Campos a cambiar: estado, prioridad, nombre, descripcion, fecha_limite, presupuesto, tarifa_hora, facturado…'),
+      },
+    },
+    async ({ id, cambios }) => {
+      const snap = await leerSnapshot(env)
+      const idx = snap.proyectos.findIndex((p) => p.id === id)
+      if (idx === -1) return ok(`Proyecto no encontrado: ${id}`)
+      snap.proyectos[idx] = { ...snap.proyectos[idx], ...cambios }
+      await escribirSnapshot(env, snap)
+      return ok(`Proyecto actualizado: ${id}`)
     }
   )
 

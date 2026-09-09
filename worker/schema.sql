@@ -34,6 +34,9 @@ CREATE TABLE IF NOT EXISTS proyectos (
   descripcion TEXT,
   cliente_id TEXT,
   campos_json TEXT,
+  presupuesto REAL,
+  tarifa_hora REAL,
+  facturado REAL,
   creado_en TEXT
 );
 

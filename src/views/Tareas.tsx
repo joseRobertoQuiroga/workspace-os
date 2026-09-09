@@ -309,16 +309,17 @@ export function Tareas() {
                 onDragOver={(e) => { e.preventDefault(); setOverCol(col.id) }}
                 onDragLeave={() => setOverCol(null)}
                 onDrop={() => { if (dragId) moverTarea(dragId, col.id); setDragId(null); setOverCol(null) }}
-                className={`theme-card flex min-h-40 flex-col p-3 transition-all ${overCol === col.id ? 'border-line-strong shadow-lift' : ''}`}
+                className={`theme-card kanban-col p-3 transition-all ${overCol === col.id ? 'border-line-strong shadow-lift' : ''}`}
+                style={{ height: 'min(76vh, 440px)' }}
               >
-                <div className="mb-2.5 flex items-center justify-between border-b border-line pb-2">
+                <div className="mb-2.5 flex shrink-0 items-center justify-between border-b border-line pb-2">
                   <div className="flex items-center gap-1.5">
                     <span className="h-2 w-2" style={{ backgroundColor: col.color }} />
                     <span className="mono-label text-[10px] font-bold">{estadoTareaLabel[col.id]}</span>
                   </div>
                   <span className="font-mono text-[10px] font-bold text-ink-3">{items.length}</span>
                 </div>
-                <div className="flex flex-1 flex-col gap-2">
+                <div className="kanban-col-body flex flex-col gap-2 pr-0.5">
                   {items.map((t) => (
                     <div
                       key={t.id}

@@ -47,6 +47,10 @@ export interface Proyecto {
   stack: string[]
   descripcion: string
   cliente_id?: string | null
+  /** Económicos (freelance/cliente): monto del proyecto, tarifa y lo ya facturado/cobrado */
+  presupuesto?: number | null
+  tarifa_hora?: number | null
+  facturado?: number | null
   creado_en: string
 }
 

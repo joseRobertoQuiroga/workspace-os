@@ -48,6 +48,9 @@ function filaProyecto(r: Record<string, unknown>) {
     stack: j<string[]>(r.stack_json as string, []),
     descripcion: r.descripcion ?? '',
     cliente_id: r.cliente_id,
+    presupuesto: r.presupuesto !== null && r.presupuesto !== undefined ? Number(r.presupuesto) : null,
+    tarifa_hora: r.tarifa_hora !== null && r.tarifa_hora !== undefined ? Number(r.tarifa_hora) : null,
+    facturado: r.facturado !== null && r.facturado !== undefined ? Number(r.facturado) : null,
     creado_en: r.creado_en,
   }
 }
@@ -223,7 +226,7 @@ export async function escribirSnapshot(env: Env, snap: DbSnapshot): Promise<void
     env.DB.prepare('DELETE FROM fichas'),
     ...tabla('areas', snap.areas ?? [], ['id', 'nombre', 'icono', 'color']),
     ...tabla('templates', snap.plantillas ?? [], ['id', 'nombre', 'icono', 'color', 'area_id', 'es_sistema', 'schema_json']),
-    ...tabla('proyectos', proyectos, ['id', 'nombre', 'area_id', 'tipo', 'estado', 'prioridad', 'destacado', 'fecha_inicio', 'fecha_limite', 'stack_json', 'descripcion', 'cliente_id', 'campos_json', 'creado_en']),
+    ...tabla('proyectos', proyectos, ['id', 'nombre', 'area_id', 'tipo', 'estado', 'prioridad', 'destacado', 'fecha_inicio', 'fecha_limite', 'stack_json', 'descripcion', 'cliente_id', 'campos_json', 'presupuesto', 'tarifa_hora', 'facturado', 'creado_en']),
     ...tabla('tareas', tareas, ['id', 'titulo', 'area_id', 'proyecto_id', 'estado', 'prioridad', 'destacado', 'fecha_limite', 'notas', 'etiquetas_json', 'arrastrada', 'mi_dia', 'subtareas_json', 'recurrencia', 'cerrada_en', 'creado_en']),
     ...tabla('notas', notas, ['id', 'titulo', 'proyecto_id', 'area_id', 'plantilla_id', 'tipo', 'estado', 'contenido_md', 'resumen', 'etiquetas_json', 'creado_en', 'actualizado_en']),
     ...tabla('clientes', snap.clientes ?? [], ['id', 'nombre', 'contacto', 'estado', 'notas']),

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useApp } from '../lib/store'
 import { Icon } from '../components/Icon'
 import { Panel, Badge, Button, Modal, Field, TextInput, TextArea, Select, AreaBadge } from '../components/ui'
+import { Markdown } from '../components/Markdown'
 import { FichaDetalle } from '../components/FichaDetalle'
 import { estadoNotaLabel, formatearFecha } from '../lib/utils'
 import type { Nota, NotaEstado, Ficha } from '../lib/types'
@@ -33,6 +34,28 @@ export function Documentos() {
   const [fTipo, setFTipo] = useState('Nota rápida')
   const [fContenido, setFContenido] = useState('')
   const [fResumen, setFResumen] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const importarMd = (archivo: File) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const contenido = String(reader.result ?? '')
+      addNota({
+        titulo: archivo.name.replace(/\.md$/i, ''),
+        proyecto_id: null,
+        area_id: 'personal',
+        plantilla_id: 'tpl-nota-rapida',
+        tipo: 'Nota rápida',
+        estado: 'borrador',
+        contenido_md: contenido,
+        resumen: contenido.replace(/[#>*_`|-]/g, '').slice(0, 120),
+        etiquetas: ['md'],
+      })
+      const creada = useApp.getState().db.notas[0]
+      setVer(creada)
+    }
+    reader.readAsText(archivo)
+  }
 
   const tipos = [...new Set(db.notas.map((n) => n.tipo))]
   const notas = db.notas.filter((n) => {
@@ -75,6 +98,16 @@ export function Documentos() {
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <TextInput placeholder="Buscar en documentos..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} className="sm:max-w-56" />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".md,.markdown,text/markdown,text/plain"
+            className="hidden"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) importarMd(f); e.target.value = '' }}
+          />
+          <Button variant="soft" icono="upload_file" onClick={() => fileInputRef.current?.click()}>
+            Importar .md
+          </Button>
           <Button variant="primary" icono="add_box" onClick={() => setNuevaAbierta(true)}>
             Nuevo documento
           </Button>
@@ -182,8 +215,8 @@ export function Documentos() {
                 </span>
               )}
             </div>
-            <div className="flex-1 overflow-y-auto border border-line bg-canvas p-4 font-mono text-[12px] leading-relaxed whitespace-pre-wrap">
-              {ver.contenido_md}
+            <div className="flex-1 overflow-y-auto border border-line bg-canvas p-4">
+              <Markdown text={ver.contenido_md} className="text-[13px] leading-relaxed text-ink-2" />
             </div>
             {/* Relacionados */}
             {(() => {

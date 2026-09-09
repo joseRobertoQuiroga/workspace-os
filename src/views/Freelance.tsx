@@ -8,6 +8,8 @@ import { FichaDetalle } from '../components/FichaDetalle'
 import { estadoClienteLabel, formatearFecha } from '../lib/utils'
 import type { Cliente, ClienteEstado, Proyecto, ProyectoEstado, Ficha } from '../lib/types'
 
+const usd = (v: number | null | undefined) => (v == null ? '—' : `$${Number(v).toLocaleString('en-US')}`)
+
 export function Freelance() {
   const db = useApp((s) => s.db)
   const addCliente = useApp((s) => s.addCliente)
@@ -30,7 +32,16 @@ export function Freelance() {
 
   const activos = db.clientes.filter((c) => c.estado === 'activo')
   const proyectosFree = db.proyectos.filter((p) => p.area_id === 'freelance')
-  const ingresosMes = proyectosFree.length * 1400
+  const enCurso = proyectosFree.filter((p) => p.estado === 'activo')
+  // Ingreso en pipe = presupuesto de proyectos activos en curso (datos reales cargados)
+  const ingresoEstimado = enCurso.reduce((acc, p) => acc + (p.presupuesto ?? 0), 0)
+  // Cobrado real del pipe
+  const totalFacturado = proyectosFree.reduce((acc, p) => acc + (p.facturado ?? 0), 0)
+
+  const setCampoEconomico = (id: string, campo: 'presupuesto' | 'tarifa_hora' | 'facturado', raw: string) => {
+    const v = raw.trim() === '' ? null : Number(raw.replace(/[$,\s]/g, ''))
+    updateProyecto(id, { [campo]: Number.isNaN(v as number) ? null : v })
+  }
 
   const crear = () => {
     if (!fNombre.trim()) return
@@ -65,17 +76,18 @@ export function Freelance() {
         </Button>
       </div>
 
-      {/* Métricas rápidas */}
+      {/* Métricas rápidas (datos reales del pipe) */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           { etiqueta: 'Clientes activos', valor: String(activos.length), color: 'rgb(var(--area-freelance))' },
-          { etiqueta: 'Proyectos en curso', valor: String(proyectosFree.filter((p) => p.estado === 'activo').length), color: 'rgb(var(--ink))' },
-          { etiqueta: 'Ingreso estimado mes', valor: `$${ingresosMes.toLocaleString()}`, color: 'rgb(var(--area-personal))' },
-          { etiqueta: 'Prospectos', valor: String(db.clientes.filter((c) => c.estado === 'prospecto').length), color: 'rgb(var(--area-univ))' },
+          { etiqueta: 'Proyectos en curso', valor: String(enCurso.length), color: 'rgb(var(--ink))' },
+          { etiqueta: 'Ingreso en pipe', valor: usd(ingresoEstimado), color: 'rgb(var(--area-personal))', sub: `${enCurso.length} proyecto(s) en curso` },
+          { etiqueta: 'Facturado / cobrado', valor: usd(totalFacturado), color: 'rgb(var(--state-done))', sub: 'acumulado freelance' },
         ].map((m) => (
           <div key={m.etiqueta} className="theme-card flex flex-col gap-1 p-4">
             <span className="mono-label text-[9px] text-ink-3">{m.etiqueta}</span>
             <span className="font-mono text-2xl font-bold" style={{ color: m.color }}>{m.valor}</span>
+            {m.sub && <span className="font-mono text-[9px] text-ink-3">{m.sub}</span>}
           </div>
         ))}
       </div>
@@ -318,6 +330,63 @@ export function Freelance() {
               <Prop label="Avance">{pctAvance(proyActivo.id)}% · {db.tareas.filter((t) => t.proyecto_id === proyActivo.id).length} tareas</Prop>
             </div>
             <p className="text-[11px] leading-relaxed text-ink-2">{proyActivo.descripcion}</p>
+
+            {/* Facturación & ingreso (datos reales editables) */}
+            <div className="border border-line bg-surface-2 p-2.5">
+              <span className="mb-2 flex items-center gap-1.5 font-mono text-[9px] font-bold uppercase text-ink-3">
+                <Icon name="payments" className="text-[13px]" /> Facturación & ingreso
+              </span>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="flex flex-col gap-1 border border-line bg-canvas p-2">
+                  <span className="mono-label text-[8px] uppercase text-ink-3">Monto del proyecto</span>
+                  <input
+                    type="number"
+                    value={proyActivo.presupuesto ?? ''}
+                    onChange={(e) => setCampoEconomico(proyActivo.id, 'presupuesto', e.target.value)}
+                    placeholder="0"
+                    className="w-full border-0 bg-transparent font-mono text-[13px] font-bold text-ink outline-none placeholder:text-ink-3"
+                  />
+                </div>
+                <div className="flex flex-col gap-1 border border-line bg-canvas p-2">
+                  <span className="mono-label text-[8px] uppercase text-ink-3">Tarifa</span>
+                  <input
+                    type="number"
+                    value={proyActivo.tarifa_hora ?? ''}
+                    onChange={(e) => setCampoEconomico(proyActivo.id, 'tarifa_hora', e.target.value)}
+                    placeholder="USD/h"
+                    className="w-full border-0 bg-transparent font-mono text-[13px] font-bold text-ink outline-none placeholder:text-ink-3"
+                  />
+                </div>
+                <div className="flex flex-col gap-1 border border-line bg-canvas p-2">
+                  <span className="mono-label text-[8px] uppercase text-ink-3">Facturado</span>
+                  <input
+                    type="number"
+                    value={proyActivo.facturado ?? ''}
+                    onChange={(e) => setCampoEconomico(proyActivo.id, 'facturado', e.target.value)}
+                    placeholder="0"
+                    className="w-full border-0 bg-transparent font-mono text-[13px] font-bold text-ink outline-none placeholder:text-ink-3"
+                  />
+                </div>
+                <div className="flex flex-col gap-1 border border-line bg-canvas p-2">
+                  <span className="mono-label text-[8px] uppercase text-ink-3">Saldo</span>
+                  <span className="font-mono text-[13px] font-bold text-area-personal">
+                    {usd((proyActivo.presupuesto ?? 0) - (proyActivo.facturado ?? 0))}
+                  </span>
+                </div>
+              </div>
+              {proyActivo.presupuesto ? (
+                <div className="mt-2 flex items-center justify-between font-mono text-[9px] text-ink-3">
+                  <span>
+                    Facturado {Math.round(((proyActivo.facturado ?? 0) / proyActivo.presupuesto) * 100)}% ·{' '}
+                    {proyActivo.tarifa_hora ? `tarifa ${usd(proyActivo.tarifa_hora)}/h` : 'sin tarifa'}
+                  </span>
+                  <Progress value={((proyActivo.facturado ?? 0) / proyActivo.presupuesto) * 100} color="rgb(var(--state-done))" className="!h-1 w-24" />
+                </div>
+              ) : (
+                <p className="mt-1.5 font-mono text-[9px] italic text-ink-3">Sin monto cargado — edita los campos para reflejar el ingreso real.</p>
+              )}
+            </div>
+
             <Tags items={proyActivo.stack} color="rgb(var(--area-freelance))" />
             <DetailActions>
               <Button variant="soft" size="sm" icono="check_circle" onClick={() => updateProyecto(proyActivo.id, { estado: 'completado' })}>
