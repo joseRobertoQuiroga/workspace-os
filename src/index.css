@@ -1,0 +1,509 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   WORKSPACE OS � Sistema de tokens por tema
+   4 estilos: brutalista · minimalista · creativo · alternativo
+   ============================================================ */
+
+:root,
+[data-theme='brutalista'] {
+  --font-sans: 'Space Grotesk';
+  --font-display: 'Space Grotesk';
+  --font-mono: 'JetBrains Mono';
+
+  --canvas: 12 13 18; /* #0c0d12 */
+  --surface: 22 24 32; /* #161820 */
+  --surface-2: 29 32 43; /* #1d202b */
+  --surface-3: 39 42 56; /* #272a38 */
+  --line: 0 0 0; /* borde negro duro */
+  --line-strong: 0 0 0;
+  --ink: 244 244 246; /* #F4F4F6 */
+  --ink-2: 157 164 185; /* #9DA4B9 */
+  --ink-3: 110 116 138;
+
+  --accent: 0 240 255; /* neo-cyan */
+  --on-accent: 0 0 0;
+  --accent-soft: 0 240 255;
+  --link: 0 240 255;
+
+  --area-univ: 255 230 0; /* amarillo */
+  --area-freelance: 0 240 255; /* cyan */
+  --area-emprende: 168 85 247; /* púrpura */
+  --area-personal: 0 255 102; /* verde */
+
+  --state-todo: 161 161 170;
+  --state-doing: 0 240 255;
+  --state-blocked: 255 0 122; /* neo-magenta */
+  --state-done: 0 255 102;
+
+  --prio-high: 255 0 122;
+  --prio-medium: 255 230 0;
+  --prio-low: 161 161 170;
+
+  --radius-card: 6px;
+  --radius-control: 4px;
+  --border-hard: 2px;
+  --shadow-card: 4px 4px 0px #000000;
+  --shadow-lift: 5px 5px 0px #000000;
+  --shadow-hard: 3px 3px 0px #000000;
+  --bg-deco: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M28 0H0v28' fill='none' stroke='rgba(255,255,255,0.045)' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+[data-theme='minimalista'] {
+  --font-sans: 'Inter';
+  --font-display: 'Inter';
+  --font-mono: 'JetBrains Mono';
+
+  --canvas: 13 13 14; /* #0d0d0e */
+  --surface: 17 17 18; /* #111112 */
+  --surface-2: 24 24 27; /* #18181b */
+  --surface-3: 32 32 36; /* #202024 */
+  --line: 34 34 38; /* #222226 */
+  --line-strong: 63 63 70;
+  --ink: 244 244 245; /* #f4f4f5 */
+  --ink-2: 161 161 170; /* #a1a1aa */
+  --ink-3: 113 113 122; /* #71717a */
+
+  --accent: 244 244 245;
+  --on-accent: 10 10 10;
+  --accent-soft: 39 39 42;
+  --link: 96 165 250;
+
+  --area-univ: 245 158 11;
+  --area-freelance: 96 165 250;
+  --area-emprende: 192 132 252;
+  --area-personal: 52 211 153;
+
+  --state-todo: 113 113 122;
+  --state-doing: 96 165 250;
+  --state-blocked: 244 63 94;
+  --state-done: 52 211 153;
+
+  --prio-high: 244 63 94;
+  --prio-medium: 245 158 11;
+  --prio-low: 113 113 122;
+
+  --radius-card: 10px;
+  --radius-control: 6px;
+  --border-hard: 1px;
+  --shadow-card: none;
+  --shadow-lift: none;
+  --shadow-hard: none;
+  --bg-deco: none;
+}
+
+[data-theme='creativo'] {
+  --font-sans: 'Inter';
+  --font-display: 'Inter';
+  --font-mono: 'JetBrains Mono';
+
+  --canvas: 11 12 16; /* #0B0C10 */
+  --surface: 19 20 28; /* #13141C */
+  --surface-2: 24 26 38; /* #181A26 */
+  --surface-3: 31 36 48; /* #1F2430 */
+  --line: 31 36 48; /* #1F2430 */
+  --line-strong: 46 53 71; /* #2E3547 */
+  --ink: 241 245 249; /* #F1F5F9 */
+  --ink-2: 148 163 184; /* #94A3B8 */
+  --ink-3: 71 85 105; /* #475569 */
+
+  --accent: 99 102 241; /* indigo eléctrico */
+  --on-accent: 241 245 249;
+  --accent-soft: 6 182 212;
+  --link: 56 189 248; /* cyan fotónico */
+
+  --area-univ: 251 191 36;
+  --area-freelance: 96 165 250;
+  --area-emprende: 167 139 250;
+  --area-personal: 16 185 129;
+
+  --state-todo: 100 116 139;
+  --state-doing: 6 182 212;
+  --state-blocked: 251 113 133;
+  --state-done: 16 185 129;
+
+  --prio-high: 251 113 133;
+  --prio-medium: 251 191 36;
+  --prio-low: 100 116 139;
+
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --border-hard: 1px;
+  --shadow-card: 0 8px 32px -8px rgba(0, 0, 0, 0.6);
+  --shadow-lift: 0 8px 32px -8px rgba(0, 0, 0, 0.6), 0 0 16px -4px rgba(99, 102, 241, 0.12);
+  --shadow-hard: 0 0 0 1px #2e3547;
+  --bg-deco: radial-gradient(60% 50% at 85% -10%, rgba(99, 102, 241, 0.09), transparent),
+    radial-gradient(50% 40% at 0% 110%, rgba(6, 182, 212, 0.06), transparent);
+}
+
+[data-theme='alternativo'] {
+  --font-sans: 'Inter';
+  --font-display: 'Inter';
+  --font-mono: 'JetBrains Mono';
+
+  --canvas: 15 15 17; /* #0f0f11 */
+  --surface: 24 24 27; /* #18181b */
+  --surface-2: 39 39 42; /* #27272a */
+  --surface-3: 46 46 52; /* #2e2e34 */
+  --line: 31 31 35; /* #1f1f23 */
+  --line-strong: 46 46 52; /* #2e2e34 */
+  --ink: 244 244 245; /* #f4f4f5 */
+  --ink-2: 209 209 216; /* #d4d4d8 */
+  --ink-3: 161 161 170; /* #a1a1aa */
+
+  --accent: 59 130 246; /* #3b82f6 */
+  --on-accent: 255 255 255;
+  --accent-soft: 59 130 246;
+  --link: 59 130 246;
+
+  --area-univ: 251 191 36;
+  --area-freelance: 96 165 250;
+  --area-emprende: 192 132 252;
+  --area-personal: 52 211 153;
+
+  --state-todo: 113 113 122;
+  --state-doing: 96 165 250;
+  --state-blocked: 251 113 133;
+  --state-done: 52 211 153;
+
+  --prio-high: 251 113 133;
+  --prio-medium: 251 191 36;
+  --prio-low: 161 161 170;
+
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --border-hard: 1px;
+  --shadow-card: none;
+  --shadow-lift: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  --shadow-hard: 0 0 0 1px #2e2e34;
+  --bg-deco: none;
+}
+
+/* ============ Base ============ */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  overscroll-behavior: none;
+  background-color: rgb(var(--canvas));
+  color: rgb(var(--ink));
+  font-family: var(--font-sans);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  background-image: var(--bg-deco);
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100%;
+}
+
+::selection {
+  background: rgb(var(--area-univ));
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgb(var(--canvas));
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--surface-3));
+}
+
+* {
+  font-feature-settings: 'tnum' on, 'cv02' on, 'cv03' on, 'cv04' on;
+}
+
+/* ============ Utilidades por tema ============ */
+.theme-border {
+  border-width: var(--border-hard);
+  border-style: solid;
+  border-color: rgb(var(--line));
+}
+
+.theme-card {
+  background-color: rgb(var(--surface));
+  border-width: var(--border-hard);
+  border-style: solid;
+  border-color: rgb(var(--line));
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+.theme-btn-press {
+  transition: transform 0.06s ease, box-shadow 0.06s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+.theme-btn-press:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-lift);
+}
+
+.theme-btn-press:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-hard);
+}
+
+[data-theme='minimalista'] .theme-btn-press:hover,
+[data-theme='creativo'] .theme-btn-press:hover,
+[data-theme='alternativo'] .theme-btn-press:hover {
+  transform: none;
+}
+
+/* En creativo los paneles son glassmorph */
+[data-theme='creativo'] .theme-card {
+  background-color: rgba(19, 20, 28, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme='minimalista'] .theme-card {
+  box-shadow: none;
+}
+
+/* Etiqueta mono micro para todos los temas (estilo HUD) */
+.mono-label {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+[data-theme='brutalista'] .mono-label {
+  letter-spacing: 0.05em;
+  font-weight: 700;
+}
+
+/* ============ Animaciones por tema ============ */
+/* Popover / carta flotante */
+.popover {
+  animation: popover-in 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+[data-theme='brutalista'] .popover {
+  animation-name: popover-in-brutal;
+  animation-duration: 0.12s;
+  animation-timing-function: steps(3, end);
+}
+@keyframes popover-in-brutal {
+  from {
+    opacity: 0;
+    transform: translate(4px, 4px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+[data-theme='minimalista'] .popover {
+  animation-name: popover-in-min;
+  animation-duration: 0.14s;
+  animation-timing-function: ease-out;
+}
+@keyframes popover-in-min {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+[data-theme='creativo'] .popover {
+  animation-name: popover-in-cyber;
+  animation-duration: 0.22s;
+}
+@keyframes popover-in-cyber {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Check con trazo dibujado */
+.check-btn {
+  color: rgb(var(--accent));
+}
+.check-path {
+  stroke-dasharray: 12;
+  stroke-dashoffset: 12;
+  transition: stroke-dashoffset 0.22s ease-out;
+}
+.check-on {
+  background-color: rgb(var(--accent));
+  border-color: rgb(var(--accent));
+  color: rgb(var(--on-accent));
+  animation: check-pop 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+.check-on .check-path {
+  stroke-dashoffset: 0;
+}
+@keyframes check-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+[data-theme='brutalista'] .check-on {
+  animation-name: check-pop-brutal;
+  animation-duration: 0.18s;
+  animation-timing-function: steps(2, end);
+}
+@keyframes check-pop-brutal {
+  0% {
+    transform: scale(1) translate(0, 0);
+    box-shadow: 2px 2px 0 #000;
+  }
+  100% {
+    transform: scale(1) translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #000;
+  }
+}
+
+[data-theme='creativo'] .check-on {
+  box-shadow: 0 0 10px rgb(var(--accent) / 0.5);
+}
+
+/* Tachado animado al completar tarea */
+.strike-anim {
+  position: relative;
+  text-decoration: none !important;
+}
+.strike-anim::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 52%;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.strike-anim.strike-on::after {
+  transform: scaleX(1);
+}
+
+/* Badge con pulso (estado vivo) */
+.pulse-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.75);
+  }
+}
+
+/* Resplandor de día con eventos en calendario */
+.day-chip {
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.day-chip:hover {
+  transform: translateY(-1px);
+}
+[data-theme='brutalista'] .day-chip:hover {
+  box-shadow: 2px 2px 0 #000;
+}
+
+/* Entrada de tarjetas de galería (stagger sutil al montar) */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.rise-in {
+  animation: rise-in 0.3s ease-out both;
+}
+
+/* Contador que "respira" al cambiar */
+.count-flash {
+  animation: count-flash 0.4s ease;
+}
+@keyframes count-flash {
+  0% {
+    transform: scale(1.25);
+    color: rgb(var(--accent));
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============ Listas con scroll vertical invisible ============ */
+/* Listas simples: alto fijo, scroll interno infinito sin perder el resto */
+.vlist,
+.vgrid {
+  overflow-y: auto;
+  scrollbar-width: none;
+  overscroll-behavior: contain;
+  scroll-behavior: smooth;
+}
+.vlist::-webkit-scrollbar,
+.vgrid::-webkit-scrollbar {
+  display: none;
+}
+.vlist {
+  max-height: 26rem;
+}
+.vgrid {
+  max-height: 31rem;
+}
+
+/* Enlaces de referencia resaltados (azul eléctrico) */
+.link-ref {
+  color: rgb(var(--link));
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+  word-break: break-all;
+}
+.link-ref:hover {
+  text-decoration-style: solid;
+  filter: brightness(1.3);
+}

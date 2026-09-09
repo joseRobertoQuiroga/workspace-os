@@ -1,0 +1,29 @@
+# Dependencias
+node_modules/
+worker/node_modules/
+
+# Builds y caché
+dist/
+.wrangler/
+*.log
+
+# Entorno y secretos
+.env
+.env.local
+.dev.vars
+*.pem
+
+# Validación local (capturas de prueba)
+shots/
+.playwright-mcp/
+
+# Mockups y material de diseño (fuera del repo de la app)
+stitch_loan_management_dashboard*/
+vistas_secciones_web/
+vistas_secciones_movil/
+prompt-*.md
+mockups*/
+
+# Editor / sistema
+.DS_Store
+Thumbs.db

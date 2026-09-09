@@ -1,0 +1,27 @@
+name = "workspace-os"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ===== Base de datos (Cloudflare D1 — capa gratuita: 5 GB) =====
+[[d1_databases]]
+binding = "DB"
+database_name = "workspace-os-db"
+database_id = "d6373c17-b1d6-4cb2-b024-66f1dcf1526d"
+
+# ===== Archivos (Cloudflare R2 — capa gratuita: 10 GB) =====
+# Requiere activar un método de pago en la cuenta (control anti-abuso; no cobra bajo 10 GB).
+# Cuando lo actives: npx wrangler r2 bucket create workspace-os-files y descomenta.
+# [[r2_buckets]]
+# binding = "BUCKET"
+# bucket_name = "workspace-os-files"
+
+# ===== Variables / secretos =====
+# Token que protege la API REST y el servidor MCP (genera uno con:
+# npx wrangler secret put API_TOKEN  →  usa la misma token en la app y el agente)
+[vars]
+CORS_ALLOW_ORIGIN = "*"
+APP_VERSION = "0.1.0"
+
+[observability]
+enabled = true

@@ -1,0 +1,24 @@
+{
+  "name": "workspace-os-worker",
+  "description": "API REST + Servidor MCP de WorkSpace OS sobre Cloudflare Workers + D1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "types": "wrangler types env.d.ts --include-runtime false",
+    "db:schema": "wrangler d1 execute workspace-os-db --file ./schema.sql",
+    "db:schema-local": "wrangler d1 execute workspace-os-db --local --file ./schema.sql"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "agents": "*",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260729.1",
+    "typescript": "^5.6.3",
+    "wrangler": "^4.115.0"
+  }
+}
