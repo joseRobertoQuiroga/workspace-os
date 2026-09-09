@@ -3,7 +3,7 @@ import { useApp } from '../lib/store'
 import { Icon } from '../components/Icon'
 import { Panel, Button, Check, TextInput, Field } from '../components/ui'
 import { TEMAS } from '../components/layout/Topbar'
-import { getBackendConfig, saveBackendConfig, healthCheck, descargarDb, subirDb } from '../lib/api'
+import { getBackendConfig, saveBackendConfig, healthCheck } from '../lib/api'
 import { getSoundConfig, saveSoundConfig, playSound, type SoundKind } from '../lib/audio'
 import type { ThemeId } from '../lib/types'
 
@@ -22,7 +22,11 @@ export function Configuracion() {
   const db = useApp((s) => s.db)
   const pomodoro = useApp((s) => s.pomodoro)
   const setPomodoro = useApp((s) => s.setPomodoro)
-  const reemplazarDb = useApp((s) => s.reemplazarDb)
+  const setSyncState = useApp((s) => s.setSyncState)
+  const syncDesdeNubeStore = useApp((s) => s.syncDesdeNube)
+  const syncANubeStore = useApp((s) => s.syncANube)
+  const lastSyncAt = useApp((s) => s.lastSyncAt)
+  const lastError = useApp((s) => s.lastError)
   const [revision, setRevision] = useState<Record<string, boolean>>({})
   const [sounds, setSounds] = useState(() => getSoundConfig())
 
@@ -60,32 +64,38 @@ export function Configuracion() {
     const r = await healthCheck(backend)
     setEstadoBackend(r.ok ? 'ok' : 'error')
     setMensajeBackend(r.mensaje)
+    setSyncState({
+      syncStatus: r.ok ? 'ok' : 'error',
+      lastError: r.ok ? null : r.mensaje,
+      ...(r.ok ? { lastSyncAt: new Date().toISOString() } : {}),
+    })
   }
 
   const sincronizarDesdeNube = async () => {
     saveBackendConfig(backend)
     setEstadoBackend('conectando')
-    try {
-      const nube = await descargarDb(backend)
-      reemplazarDb(nube)
+    const ok = await syncDesdeNubeStore()
+    if (ok) {
       setEstadoBackend('sincronizado')
-      setMensajeBackend(`Descargado: ${nube.tareas.length} tareas, ${nube.proyectos.length} proyectos, ${nube.notas.length} notas.`)
-    } catch (e) {
+      const ahora = useApp.getState().db
+      setMensajeBackend(`Descargado: ${ahora.tareas.length} tareas, ${ahora.proyectos.length} proyectos, ${ahora.notas.length} notas.`)
+    } else {
       setEstadoBackend('error')
-      setMensajeBackend(e instanceof Error ? e.message : String(e))
+      setMensajeBackend(useApp.getState().lastError ?? 'Error al sincronizar')
     }
   }
 
   const subirANube = async () => {
     saveBackendConfig(backend)
     setEstadoBackend('conectando')
-    try {
-      await subirDb(backend, db)
+    const ok = await syncANubeStore()
+    if (ok) {
       setEstadoBackend('subido')
-      setMensajeBackend(`Subido: ${db.tareas.length} tareas, ${db.proyectos.length} proyectos, ${db.notas.length} notas.`)
-    } catch (e) {
+      const ahora = useApp.getState().db
+      setMensajeBackend(`Subido: ${ahora.tareas.length} tareas, ${ahora.proyectos.length} proyectos, ${ahora.notas.length} notas.`)
+    } else {
       setEstadoBackend('error')
-      setMensajeBackend(e instanceof Error ? e.message : String(e))
+      setMensajeBackend(useApp.getState().lastError ?? 'Error al subir')
     }
   }
 
@@ -335,6 +345,12 @@ export function Configuracion() {
               <span className="pulse-dot h-1.5 w-1.5 rounded-full" style={{ backgroundColor: backend.url && !backend.url.includes('<tu-subdominio>') ? 'rgb(var(--state-done))' : 'rgb(var(--ink-3))' }} />
               Auto-sync a la nube: {backend.url && !backend.url.includes('<tu-subdominio>') ? 'ACTIVO — los cambios se suben solos (debounce 4s)' : 'INACTIVO — configura la URL y el token'}
             </span>
+            {lastSyncAt && (
+              <span className="text-ink-3">
+                Última validación: {new Date(lastSyncAt).toLocaleString('es-ES', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+            {lastError && <span className="text-prio-high">· {lastError}</span>}
           </div>
           {mensajeBackend && (
             <div className="border border-line bg-surface-2 p-2.5 font-mono text-[11px]" style={{ color: colorBackend }}>

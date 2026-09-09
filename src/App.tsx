@@ -47,6 +47,21 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Polling: cada 60s descarga la nube para ver cambios hechos desde otro equipo.
+  // (No interviene mientras está subiendo/descargando.)
+  useEffect(() => {
+    const cfg = getBackendConfig()
+    if (!cfg || !cfg.url) return
+    const iv = setInterval(() => {
+      const st = useApp.getState()
+      if (st.syncStatus !== 'subiendo' && st.syncStatus !== 'descargando') {
+        st.syncDesdeNube()
+      }
+    }, 60000)
+    return () => clearInterval(iv)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // Auto-sync a la nube: los cambios del usuario se suben solos tras un debounce
   // de 4s (se omite la primera subida tras la descarga inicial para no re-subir lo mismo).
   useEffect(() => {
